@@ -379,7 +379,7 @@ pyyaml==6.0.1
     # via
     #   drf-spectacular
     #   pymdown-extensions
-recurring-ical-events==2.1.0
+recurring-ical-events==3.3.3
     # via -r requirements.in
 redis==5.0.1
     # via
@@ -481,7 +481,7 @@ wrapt==1.16.0
     # via
     #   deprecated
     #   opentelemetry-instrumentation
-x-wr-timezone==0.0.6
+x-wr-timezone==1.0.1
     # via recurring-ical-events
 zipp==3.19.1
     # via importlib-metadata

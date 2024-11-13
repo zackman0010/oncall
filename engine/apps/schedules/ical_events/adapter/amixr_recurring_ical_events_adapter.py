@@ -2,7 +2,7 @@ import datetime
 import typing
 
 from icalendar import Calendar, Event
-from recurring_ical_events import UnfoldableCalendar, time_span_contains_event
+from recurring_ical_events import CalendarQuery, time_span_contains_event
 
 from apps.schedules.constants import (
     ICAL_DATETIME_END,
@@ -33,10 +33,18 @@ class AmixrRecurringIcalEventsAdapter(IcalService):
         make one more pass for events array to filter out events which are between start_date and end_date.
         EXTRA_LOOKUP_DAYS is empirical.
         """
-        events = UnfoldableCalendar(calendar).between(
+        events = CalendarQuery(calendar).between(
             start_date - datetime.timedelta(days=EXTRA_LOOKUP_DAYS),
             end_date + datetime.timedelta(days=EXTRA_LOOKUP_DAYS),
         )
+
+        for event in events:
+            if event['DTEND'] and hasattr(event['DTSTART'].dt,'tzinfo') and hasattr(event['DTEND'].dt,'tzinfo'):
+                startDt = event['DTSTART'].dt
+                endDt = event['DTEND'].dt
+                if startDt.tzinfo != endDt.tzinfo:
+                    event['DTEND'].dt = endDt + startDt.dst() - endDt.dst()
+
 
         def filter_extra_days(event):
             event_start, event_end = self.get_start_and_end_with_respect_to_event_type(event)

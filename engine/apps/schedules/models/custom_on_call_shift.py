@@ -549,16 +549,16 @@ class CustomOnCallShift(models.Model):
 
         next_event = None
         # repetitions generate the next event shift according with the recurrence rules
-        repeated_event = recurring_ical_events.RepeatedEvent(current_event)
+        repeated_event = recurring_ical_events.Series([recurring_ical_events.EventAdapter(current_event)])
         max_date_range = next_event_start + datetime.timedelta(days=DAYS_IN_A_MONTH)
         if end_date:
             max_date_range = max(end_date, max_date_range)
-        repetitions = repeated_event.within_days(next_event_start.replace(microsecond=0), max_date_range)
+        repetitions = repeated_event.between(next_event_start.replace(microsecond=0), max_date_range)
         for event in repetitions:
             if end_date:  # end_date exists for long events with frequency weekly and monthly
                 if end_date >= event.start >= next_event_start:
                     if (
-                        self.source == CustomOnCallShift.SOURCE_WEB and event.stop > self.rotation_start
+                        self.source == CustomOnCallShift.SOURCE_WEB and event.end > self.rotation_start
                     ) or event.start >= self.rotation_start:
                         next_event = event
                         break
@@ -590,8 +590,8 @@ class CustomOnCallShift(models.Model):
 
         last_event = None
         # repetitions generate the next event shift according with the recurrence rules
-        repeated_event = recurring_ical_events.RepeatedEvent(initial_event)
-        repetitions = repeated_event.within_days(initial_event_start, date)
+        repeated_event = recurring_ical_events.Series([recurring_ical_events.EventAdapter(initial_event)])
+        repetitions = repeated_event.between(initial_event_start, date)
         for event in repetitions:
             if event.start > date:
                 break

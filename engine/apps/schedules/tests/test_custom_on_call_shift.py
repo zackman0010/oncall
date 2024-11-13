@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 import icalendar
 import pytest
 from django.utils import timezone
-from recurring_ical_events import UnfoldableCalendar
+from recurring_ical_events import CalendarQuery
 
 from apps.schedules.ical_utils import list_users_to_notify_from_ical
 from apps.schedules.models import CustomOnCallShift, OnCallSchedule, OnCallScheduleCalendar, OnCallScheduleWeb
@@ -1887,7 +1887,7 @@ def test_ical_shift_generation(
     query_end = data["until"]
 
     calendar = icalendar.Calendar.from_ical(schedule._ical_file_primary)
-    events = UnfoldableCalendar(calendar).between(query_start, query_end)
+    events = CalendarQuery(calendar).between(query_start, query_end)
 
     day_events = defaultdict(str)
     for event in events:
