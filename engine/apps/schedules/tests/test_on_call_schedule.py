@@ -2663,7 +2663,7 @@ def test_filter_events_ical_duplicated_uid(make_organization, make_user_for_orga
 
     assert len(events) == 2
     assert events[0]["shift"]["pk"] == "eventuid@google.com_1"
-    assert events[1]["shift"]["pk"] == "eventuid@google.com_2_1970-01-01T01:00:00+01:00"
+    assert events[1]["shift"]["pk"] == "eventuid@google.com_2"
 
 
 @pytest.mark.django_db

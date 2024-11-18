@@ -23,7 +23,6 @@ from apps.schedules.constants import (
     ICAL_DESCRIPTION,
     ICAL_LOCATION,
     ICAL_PRIORITY,
-    ICAL_RECURRENCE_ID,
     ICAL_SEQUENCE,
     ICAL_STATUS,
     ICAL_STATUS_CANCELLED,
@@ -215,11 +214,8 @@ def get_shifts_dict(
             # ignore cancelled events
             continue
         sequence = event.get(ICAL_SEQUENCE)
-        recurrence_id = event.get(ICAL_RECURRENCE_ID)
-        if recurrence_id:
-            recurrence_id = recurrence_id.dt.isoformat()
         priority = parse_priority_from_string(event.get(ICAL_SUMMARY, "[L0]"))
-        pk, source = parse_event_uid(event.get(ICAL_UID), sequence=sequence, recurrence_id=recurrence_id)
+        pk, source = parse_event_uid(event.get(ICAL_UID), sequence=sequence)
         users = get_users_from_ical_event(event, schedule.organization)
         missing_users = get_missing_users_from_ical_event(event, schedule.organization)
         event_calendar_type = calendar_type
@@ -541,7 +537,7 @@ def parse_priority_from_string(string: str) -> int:
     return priority
 
 
-def parse_event_uid(string: str, sequence: str = None, recurrence_id: str = None):
+def parse_event_uid(string: str, sequence: str = None):
     pk = None
     source = None
     source_verbal = None
@@ -570,8 +566,6 @@ def parse_event_uid(string: str, sequence: str = None, recurrence_id: str = None
         # (see https://icalendar.org/iCalendar-RFC-5545/3-8-4-4-recurrence-id.html)
         if sequence:
             pk = f"{pk}_{sequence}"
-        if recurrence_id:
-            pk = f"{pk}_{recurrence_id}"
 
     if source is not None:
         source = int(source)

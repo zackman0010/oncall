@@ -403,12 +403,6 @@ def test_parse_recurrent_event_uid_fallback_modified():
     pk, source = parse_event_uid(event_uid, sequence="2")
     assert pk == f"{event_uid}_2"
     assert source is None
-    pk, source = parse_event_uid(event_uid, recurrence_id="other-id")
-    assert pk == f"{event_uid}_other-id"
-    assert source is None
-    pk, source = parse_event_uid(event_uid, sequence="3", recurrence_id="other-id")
-    assert pk == f"{event_uid}_3_other-id"
-    assert source is None
 
 
 def test_is_icals_equal_compare_events():
